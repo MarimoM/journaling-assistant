@@ -65,7 +65,7 @@ Launch the Streamlit web application:
 pixi run journal-ui
 
 # Or manually
-streamlit run streamlit_app.py --server.headless false --theme.base light
+streamlit run src/streamlit_app.py --server.headless false --theme.base light
 ```
 
 The web interface provides:
@@ -84,7 +84,7 @@ The web interface provides:
 pixi run journal-cli
 
 # Or manually
-python interactive_journal.py
+python src/interactive_journal.py
 ```
 
 #### Direct Chat (Single Query)
@@ -101,23 +101,24 @@ python src/journaling_assistant/chat.py "How can I improve my morning routine?"
 
 ```
 journaling/
-├── src/journaling_assistant/    # Core application modules
-│   ├── agent.py                 # Main journaling assistant agent
-│   ├── chat.py                  # Simple chat interface
-│   ├── database.py              # SQLite database management
-│   ├── ollama_model.py          # Ollama integration
-│   ├── summarizer.py            # Conversation summarization
-│   ├── sync_agent.py            # Synchronous agent wrapper
-│   └── template_manager.py      # Jinja2 template management
-├── templates/                   # Prompt templates
-│   ├── context_aware_responses.j2
-│   ├── conversation_summary.j2
-│   ├── reflection_prompts.j2
-│   └── system_prompt.j2
-├── streamlit_app.py             # Web UI application
-├── interactive_journal.py       # CLI application
-├── run_journal_agent.py         # Alternative runner
-├── run_streamlit.py            # Streamlit runner
+├── src/                         # Source code directory
+│   ├── journaling_assistant/    # Core application modules
+│   │   ├── agent.py             # Main journaling assistant agent
+│   │   ├── chat.py              # Simple chat interface
+│   │   ├── database.py          # SQLite database management
+│   │   ├── ollama_model.py      # Ollama integration
+│   │   ├── summarizer.py        # Conversation summarization
+│   │   ├── sync_agent.py        # Synchronous agent wrapper
+│   │   └── template_manager.py  # Jinja2 template management
+│   ├── templates/               # Prompt templates
+│   │   ├── context_aware_responses.j2
+│   │   ├── conversation_summary.j2
+│   │   ├── reflection_prompts.j2
+│   │   └── system_prompt.j2
+│   ├── streamlit_app.py         # Web UI application
+│   ├── interactive_journal.py   # CLI application
+│   ├── run_journal_agent.py     # Alternative runner
+│   └── run_streamlit.py         # Streamlit runner
 ├── journaling.db               # SQLite database (created on first run)
 ├── pixi.toml                   # Pixi configuration
 └── README.md                   # This file
@@ -129,7 +130,7 @@ The application uses SQLite for data storage and creates a `journaling.db` file 
 
 ### Templates
 
-The application uses Jinja2 templates located in the `templates/` directory:
+The application uses Jinja2 templates located in the `src/templates/` directory:
 - `system_prompt.j2` - Main system prompt for the AI assistant
 - `reflection_prompts.j2` - Daily reflection prompts
 - `conversation_summary.j2` - Template for generating conversation summaries

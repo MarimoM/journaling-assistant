@@ -6,8 +6,8 @@ import asyncio
 import sys
 import os
 
-# Add the src/journaling_assistant directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src', 'journaling_assistant'))
+# Add the journaling_assistant directory to the Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), 'journaling_assistant'))
 
 from agent import JournalingAssistant
 

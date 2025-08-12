@@ -14,10 +14,10 @@ class TemplateManager:
     def __init__(self, templates_dir: Optional[str] = None):
         """Initialize the template manager."""
         if templates_dir is None:
-            # Default to templates directory relative to project root
+            # Default to templates directory relative to src directory
             current_dir = Path(__file__).parent
-            project_root = current_dir.parent.parent
-            templates_dir = project_root / "templates"
+            src_dir = current_dir.parent
+            templates_dir = src_dir / "templates"
         
         self.templates_dir = Path(templates_dir)
         

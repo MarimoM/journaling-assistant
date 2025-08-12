@@ -14,8 +14,8 @@ from typing import List, Dict, Any
 # Apply nest_asyncio to allow nested event loops
 nest_asyncio.apply()
 
-# Add the src/journaling_assistant directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src', 'journaling_assistant'))
+# Add the journaling_assistant directory to the Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), 'journaling_assistant'))
 
 from sync_agent import SyncJournalingAssistant
 from database import db, Conversation, Message
