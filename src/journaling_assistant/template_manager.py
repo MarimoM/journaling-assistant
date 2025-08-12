@@ -33,8 +33,6 @@ class TemplateManager:
         
         # Add custom filters if needed
         self.env.filters['join'] = lambda x, sep=', ': sep.join(str(i) for i in x if i)
-        
-        print(f"✅ Template manager initialized with templates from: {self.templates_dir}")
     
     def get_template(self, template_name: str) -> Template:
         """Get a template by name."""
@@ -62,5 +60,4 @@ class TemplateManager:
         }
         return self.render_template("system_prompt.j2", context)
 
-# Global template manager instance
 template_manager = TemplateManager()
