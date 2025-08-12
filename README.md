@@ -109,12 +109,12 @@ journaling/
 │   │   ├── ollama_model.py      # Ollama integration
 │   │   ├── summarizer.py        # Conversation summarization
 │   │   ├── sync_agent.py        # Synchronous agent wrapper
-│   │   └── template_manager.py  # Jinja2 template management
-│   ├── templates/               # Prompt templates
-│   │   ├── context_aware_responses.j2
-│   │   ├── conversation_summary.j2
-│   │   ├── reflection_prompts.j2
-│   │   └── system_prompt.j2
+│   │   ├── template_manager.py  # Jinja2 template management
+│   │   └── templates/           # Prompt templates
+│   │       ├── context_aware_responses.j2
+│   │       ├── conversation_summary.j2
+│   │       ├── reflection_prompts.j2
+│   │       └── system_prompt.j2
 │   ├── streamlit_app.py         # Web UI application
 │   ├── interactive_journal.py   # CLI application
 │   ├── run_journal_agent.py     # Alternative runner
@@ -130,7 +130,7 @@ The application uses SQLite for data storage and creates a `journaling.db` file 
 
 ### Templates
 
-The application uses Jinja2 templates located in the `src/templates/` directory:
+The application uses Jinja2 templates located in the `src/journaling_assistant/templates/` directory:
 - `system_prompt.j2` - Main system prompt for the AI assistant
 - `reflection_prompts.j2` - Daily reflection prompts
 - `conversation_summary.j2` - Template for generating conversation summaries
