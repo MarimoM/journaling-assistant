@@ -181,3 +181,4 @@ scripts/langfuse_mining_results
 # Claude Code
 .claude
 CLAUDE.md
+*.db
