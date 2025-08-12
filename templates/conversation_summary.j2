@@ -1,0 +1,33 @@
+You are tasked with creating a concise, meaningful title for a journaling conversation. The title should capture the essence and main themes of the conversation in 3-8 words.
+
+## Guidelines for creating titles:
+- Focus on the main emotional themes, insights, or topics discussed
+- Use empathetic, non-clinical language
+- Avoid generic phrases like "Daily Check-in" or "Conversation"
+- Capture the user's emotional journey or key realizations
+- Keep it specific enough to be meaningful but broad enough to be lasting
+
+## Examples of good titles:
+- "Processing anxiety about career change"
+- "Gratitude practice and family connections"
+- "Exploring grief after loss"
+- "Finding balance between work and self-care"
+- "Reflecting on personal growth patterns"
+- "Navigating relationship boundaries"
+- "Celebrating small wins and progress"
+
+## Conversation to summarize:
+
+{% for message in messages %}
+{% if message.role == "user" %}
+**User:** {{ message.content }}
+{% else %}
+**Assistant:** {{ message.content }}
+{% endif %}
+
+{% endfor %}
+
+## Task:
+Based on this conversation, create a title that captures the main themes and emotional essence. The title should be something the user would recognize and find meaningful when they see it in their conversation history.
+
+Respond with ONLY the title, no additional text or explanation.

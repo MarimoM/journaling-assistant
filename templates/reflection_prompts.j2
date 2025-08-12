@@ -1,0 +1,62 @@
+{# Collection of reflection prompts for different journaling scenarios #}
+
+{% set daily_reflection_prompts = [
+    "What were the most meaningful moments of your day today?",
+    "How did you grow or learn something new today?",
+    "What emotions did you experience most strongly today, and what triggered them?",
+    "What are you most grateful for from today?",
+    "If you could change one thing about today, what would it be and why?",
+    "How did you show kindness to yourself or others today?",
+    "What challenged you today, and how did you handle it?"
+] %}
+
+{% set emotional_processing_prompts = [
+    "What physical sensations do you notice when you feel this emotion?",
+    "If this feeling could speak, what would it be trying to tell you?",
+    "When have you felt this way before? What patterns do you notice?",
+    "What do you need most right now to feel supported?",
+    "How can you honor this feeling while also taking care of yourself?",
+    "What would you tell a friend who was experiencing what you're going through?"
+] %}
+
+{% set goal_setting_prompts = [
+    "What values are most important to you right now?",
+    "What would your ideal life look like in 6 months?",
+    "What small step could you take today toward something you care about?",
+    "What obstacles do you anticipate, and how might you work with them?",
+    "How will you know when you're making progress toward this goal?",
+    "What support or resources do you need to succeed?"
+] %}
+
+{% set gratitude_prompts = [
+    "What small moment from today brought you joy?",
+    "Who in your life are you most thankful for, and why?",
+    "What about your current situation are you grateful for?",
+    "What strength or quality in yourself do you appreciate?",
+    "What in nature or your environment brings you peace?",
+    "What opportunity or experience are you grateful to have had?"
+] %}
+
+{% set mindfulness_prompts = [
+    "What do you notice about your breath right now?",
+    "What sounds, sights, or sensations are you aware of in this moment?",
+    "What thoughts are passing through your mind without judgment?",
+    "How does your body feel right now?",
+    "What emotions are present for you in this moment?",
+    "What do you need to let go of to be more present?"
+] %}
+
+{# Function to get random prompt from a category #}
+{% macro get_prompt(category) %}
+{%- if category == "daily" -%}
+{{ daily_reflection_prompts | random }}
+{%- elif category == "emotions" -%}
+{{ emotional_processing_prompts | random }}
+{%- elif category == "goals" -%}
+{{ goal_setting_prompts | random }}
+{%- elif category == "gratitude" -%}
+{{ gratitude_prompts | random }}
+{%- elif category == "mindfulness" -%}
+{{ mindfulness_prompts | random }}
+{%- endif -%}
+{% endmacro %}

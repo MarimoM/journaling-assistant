@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ollama list:*)",
+      "Bash(chmod:*)",
+      "Bash(python3:*)",
+      "Bash(mv:*)",
+      "Bash(pixi install:*)",
+      "Bash(pixi run:*)",
+      "Bash(ollama run:*)",
+      "Bash(timeout 30 pixi run python src/journaling_assistant/chat.py \"Hello\")",
+      "Bash(pixi shell:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)"
+    ],
+    "deny": []
+  }
+}

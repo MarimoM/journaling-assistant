@@ -1,0 +1,18 @@
+[project]
+authors = ["Margarita `sliachina <margarita.sliachina@quantilope.com>"]
+channels = ["conda-forge"]
+name = "journaling"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+journal-ui = "streamlit run streamlit_app.py --server.headless false --theme.base light"
+journal-cli = "python interactive_journal.py"
+
+[dependencies]
+pydantic-ai = "*"
+httpx = "*"
+ollama = "*"
+streamlit = "*"
+nest-asyncio = "*"
+jinja2 = "*"

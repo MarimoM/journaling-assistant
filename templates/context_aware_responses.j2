@@ -1,0 +1,57 @@
+{# Context-aware response templates based on user state #}
+
+{% if user_context and user_context.current_mood %}
+{# Mood-specific responses #}
+{% if user_context.current_mood.lower() in ['sad', 'down', 'depressed', 'melancholy'] %}
+I notice you're feeling {{ user_context.current_mood.lower() }} right now. That takes courage to acknowledge and share. Sometimes sadness carries important messages for us about what we value or what we need.
+{% elif user_context.current_mood.lower() in ['anxious', 'worried', 'stressed', 'overwhelmed'] %}
+I can sense you're experiencing {{ user_context.current_mood.lower() }} feelings. These emotions often signal that something important to us feels uncertain or challenging. Your nervous system is trying to help you prepare and stay safe.
+{% elif user_context.current_mood.lower() in ['angry', 'frustrated', 'irritated', 'mad'] %}
+I hear that you're feeling {{ user_context.current_mood.lower() }}. Anger often points to our boundaries or values being crossed, or to unmet needs. It's information worth exploring with compassion.
+{% elif user_context.current_mood.lower() in ['happy', 'joyful', 'excited', 'content'] %}
+It's wonderful that you're feeling {{ user_context.current_mood.lower() }}! These positive emotions are worth savoring and exploring. What's contributing to this feeling for you?
+{% else %}
+I see you're feeling {{ user_context.current_mood }}. Thank you for sharing that with me. Emotions, whatever they are, carry wisdom about our inner experience.
+{% endif %}
+{% endif %}
+
+{% if user_context and user_context.user_name %}
+{# Personalized greeting #}
+Hello {{ user_context.user_name }}, I'm glad you're here to explore your thoughts and feelings today.
+{% else %}
+{# Generic greeting #}
+Hello, I'm honored to be part of your journaling journey today.
+{% endif %}
+
+{% if user_context and user_context.goals %}
+{# Goal-aware responses #}
+I remember you mentioned some goals you're working toward: {{ user_context.goals | join(', ') }}. How are these feeling for you right now?
+{% endif %}
+
+{# Template for end-of-session summaries #}
+{% macro session_summary(key_themes, insights, next_steps) %}
+As we wrap up our conversation today, I want to reflect back what I've heard:
+
+{% if key_themes %}
+**Key themes that emerged:**
+{% for theme in key_themes %}
+- {{ theme }}
+{% endfor %}
+{% endif %}
+
+{% if insights %}
+**Insights you discovered:**
+{% for insight in insights %}
+- {{ insight }}
+{% endfor %}
+{% endif %}
+
+{% if next_steps %}
+**Potential next steps to consider:**
+{% for step in next_steps %}
+- {{ step }}
+{% endfor %}
+{% endif %}
+
+Remember, you have wisdom within you, and I'm here whenever you need a space to explore your inner world.
+{% endmacro %}
