@@ -4,11 +4,17 @@ Pydantic AI Agent for Journaling Assistant using Llama 3 model via Ollama.
 """
 
 import asyncio
+import os
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
 from ollama_model import OllamaModel
 from template_manager import template_manager
+from langfuse import get_client, observe
+
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
 
 class JournalingContext(BaseModel):
     """Context for journaling sessions."""
@@ -92,16 +98,31 @@ def add_goal(ctx: RunContext[JournalingContext], goal: str) -> str:
     ctx.deps.goals.append(goal)
     return f"Goal added: {goal}"
 
+@observe(name="chat_with_agent")
 async def chat_with_agent(
     message: str,
     context: JournalingContext,
     stream: bool = False
 ) -> str:
     """Chat with the journaling agent."""
+    
+    # Get the Langfuse client for trace creation
+    client = get_client()
+    
     try:
         # Always use non-streaming for now due to Ollama model limitations
         result = await journaling_agent.run(message, deps=context)
         response_text = result.data
+        
+        # Update span with success
+        client.update_current_span(
+            input=message,
+            output=response_text,
+            metadata={
+                "response_length": len(response_text),
+                "status": "success"
+            }
+        )
         
         if stream:
             # Simulate streaming by printing character by character
@@ -112,6 +133,15 @@ async def chat_with_agent(
         
         return response_text
     except Exception as e:
+        # Update span with error
+        client.update_current_span(
+            input=message,
+            output=f"Error: {str(e)}",
+            metadata={
+                "status": "error",
+                "error": str(e)
+            }
+        )
         return f"Error: {str(e)}"
 
 class JournalingAssistant:
@@ -123,17 +153,41 @@ class JournalingAssistant:
             session_id=f"session_{asyncio.get_event_loop().time()}"
         )
     
+    @observe(name="journaling_chat")
     async def chat(self, message: str, stream: bool = True) -> str:
         """Send a message to the agent and get a response."""
-        # Add to conversation history
-        self.context.conversation_history.append({"role": "user", "content": message})
         
-        response = await chat_with_agent(message, self.context, stream=stream)
+        # Get the Langfuse client for trace creation
+        client = get_client()
         
-        # Add response to conversation history
-        self.context.conversation_history.append({"role": "assistant", "content": response})
-        
-        return response
+        try:
+            # Add to conversation history
+            self.context.conversation_history.append({"role": "user", "content": message})
+            response = await chat_with_agent(message, self.context, stream=stream)
+            self.context.conversation_history.append({"role": "assistant", "content": response})
+            client.update_current_span(
+                input=message,
+                output=response,
+                metadata={
+                    "response_generated": True,
+                    "final_conversation_length": len(self.context.conversation_history),
+                    "has_mood": self.context.current_mood is not None,
+                    "goals_count": len(self.context.goals)
+                }
+            )
+            
+            return response
+        except Exception as e:
+            # Update span with error
+            client.update_current_span(
+                input=message,
+                output=f"Error: {str(e)}",
+                metadata={
+                    "error": str(e),
+                    "response_generated": False
+                }
+            )
+            raise
     
     def set_mood(self, mood: str):
         """Set the current mood."""
@@ -158,37 +212,42 @@ async def main():
     
     assistant = JournalingAssistant(user_name)
     
-    while True:
-        try:
-            user_input = input("\n💭 You: ").strip()
-            
-            if user_input.lower() == 'quit':
-                print("Thank you for journaling today. Take care! 🌸")
+    try:
+        while True:
+            try:
+                user_input = input("\n💭 You: ").strip()
+                
+                if user_input.lower() == 'quit':
+                    print("Thank you for journaling today. Take care! 🌸")
+                    break
+                
+                if user_input.lower().startswith('mood '):
+                    mood = user_input[5:].strip()
+                    assistant.set_mood(mood)
+                    print(f"✨ Mood set to: {mood}")
+                    continue
+                
+                if user_input.lower().startswith('goal '):
+                    goal = user_input[5:].strip()
+                    assistant.add_goal(goal)
+                    print(f"🎯 Goal added: {goal}")
+                    continue
+                
+                if not user_input:
+                    continue
+                
+                print("🤖 Assistant: ", end='')
+                await assistant.chat(user_input, stream=True)
+                
+            except KeyboardInterrupt:
+                print("\n\nGoodbye! Take care! 👋")
                 break
-            
-            if user_input.lower().startswith('mood '):
-                mood = user_input[5:].strip()
-                assistant.set_mood(mood)
-                print(f"✨ Mood set to: {mood}")
-                continue
-            
-            if user_input.lower().startswith('goal '):
-                goal = user_input[5:].strip()
-                assistant.add_goal(goal)
-                print(f"🎯 Goal added: {goal}")
-                continue
-            
-            if not user_input:
-                continue
-            
-            print("🤖 Assistant: ", end='')
-            await assistant.chat(user_input, stream=True)
-            
-        except KeyboardInterrupt:
-            print("\n\nGoodbye! Take care! 👋")
-            break
-        except Exception as e:
-            print(f"\nError: {e}")
+            except Exception as e:
+                print(f"\nError: {e}")
+    finally:
+        # Flush Langfuse events before exiting
+        langfuse = get_client()
+        langfuse.flush()
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -31,9 +31,7 @@
     display: flex;
     flex-direction: column;
     max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
+    text-align: left;
     line-height: 1.6;
 }
 
@@ -41,12 +39,16 @@
     background-color: #f8f9fa;
     border: 2px solid #1a73e8;
     box-shadow: 0 2px 8px rgba(26, 115, 232, 0.1);
+    margin-left: 0;
+    margin-right: auto;
 }
 
 .assistant-message {
     background-color: #ffffff;
     border: 2px solid #34a853;
     box-shadow: 0 2px 8px rgba(52, 168, 83, 0.1);
+    margin-left: auto;
+    margin-right: 0;
 }
 
 .mood-badge {

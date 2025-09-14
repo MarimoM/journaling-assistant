@@ -16,3 +16,7 @@ ollama = "*"
 streamlit = "*"
 nest-asyncio = "*"
 jinja2 = "*"
+
+[pypi-dependencies]
+langfuse = "*"
+python-dotenv = "*"

@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 """
-Custom Ollama model implementation for pydantic-ai.
+Custom Ollama model implementation for pydantic-ai with Langfuse integration.
 """
 
 import asyncio
 import subprocess
 import json
+import time
 from typing import List, Dict, Any, Optional, Union, AsyncIterator
 from pydantic_ai.models import Model, ModelResponse, ModelRequest, StreamedResponse
 from pydantic_ai.messages import ModelMessage, SystemPromptPart, UserPromptPart, TextPart
+from langfuse import observe, get_client
+import langfuse
 
 
 class OllamaModel(Model):
-    """Custom Ollama model implementation for pydantic-ai."""
+    """Custom Ollama model implementation for pydantic-ai with Langfuse tracking."""
     
     def __init__(self, model_name: str = 'llama3:latest'):
         self._model_name = model_name
@@ -27,12 +30,15 @@ class OllamaModel(Model):
         # We'll store it and include it in the request
         self._system_prompt = system_prompt
     
+    @observe(name="ollama_request")
     async def request(
         self,
         *args,
         **kwargs: Any
     ) -> ModelResponse:
-        """Make a request to the Ollama model."""
+        """Make a request to the Ollama model with Langfuse tracking."""
+
+        client = get_client()
         
         # Extract the messages from args (first arg is the messages list)
         messages = args[0] if args else []
@@ -61,21 +67,45 @@ class OllamaModel(Model):
             final_prompt = user_message
         
         try:
-            # Use synchronous subprocess for simplicity
-            result = subprocess.run(
-                ['ollama', 'run', self._model_name, final_prompt],
-                capture_output=True,
-                text=True,
-                check=True
+            process = subprocess.Popen(
+                ['ollama', 'run', self._model_name],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
             )
-            
-            response_text = result.stdout.strip()
-            
-            # Create ModelResponse with TextPart
-            text_part = TextPart(content=response_text)
-            return ModelResponse(
-                parts=[text_part]
-            )
+
+            # Use stdin to avoid command line length limits and escaping issues
+            with client.start_as_current_generation(
+                name="llm-response", 
+                model=self._model_name,
+                input=final_prompt,
+                metadata={
+                    "user_message": user_message,
+                    "system_prompt": system_prompt_text,
+                    "model_provider": "ollama"
+                }
+            ) as generation:
+                stdout, stderr = process.communicate(input=final_prompt)
+
+                if process.returncode != 0:
+                    raise subprocess.CalledProcessError(process.returncode, 'ollama run', stderr)
+
+                response_text = stdout.strip()
+
+                # Update generation with the response
+                generation.update(
+                    output=response_text,
+                    usage={
+                        "input": len(final_prompt.split()),
+                        "output": len(response_text.split()),
+                        "total": len(final_prompt.split()) + len(response_text.split())
+                    }
+                )
+
+                # Create ModelResponse with TextPart
+                text_part = TextPart(content=response_text)
+                return ModelResponse(parts=[text_part])
             
         except subprocess.CalledProcessError as e:
             raise Exception(f"Ollama request failed: {e}")
