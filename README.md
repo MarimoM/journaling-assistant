@@ -65,7 +65,7 @@ Launch the Streamlit web application:
 pixi run journal-ui
 
 # Or manually
-streamlit run src/streamlit_app.py --server.headless false --theme.base light
+streamlit run src/streamlit/streamlit_app.py --server.headless false --theme.base light
 ```
 
 The web interface provides:
@@ -115,7 +115,10 @@ journaling/
 │   │       ├── conversation_summary.j2
 │   │       ├── reflection_prompts.j2
 │   │       └── system_prompt.j2
-│   ├── streamlit_app.py         # Web UI application
+│   ├── streamlit/               # Streamlit web application
+│   │   ├── streamlit_app.py     # Main Streamlit app
+│   │   ├── styles.css           # Custom CSS styling
+│   │   └── utils.py             # Utility functions
 │   ├── interactive_journal.py   # CLI application
 │   ├── run_journal_agent.py     # Alternative runner
 │   └── run_streamlit.py         # Streamlit runner

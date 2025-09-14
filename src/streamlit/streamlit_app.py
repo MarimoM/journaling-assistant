@@ -15,11 +15,12 @@ from typing import List, Dict, Any
 nest_asyncio.apply()
 
 # Add the journaling_assistant directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'journaling_assistant'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'journaling_assistant'))
 
 from sync_agent import SyncJournalingAssistant
 from database import db, Conversation, Message
 from summarizer import summarizer
+
 
 # Page configuration
 st.set_page_config(
@@ -29,72 +30,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for beautiful styling
-st.markdown("""
-<style>
-    .main {
-        padding-top: 2rem;
-    }
-    
-    .stApp > header {
-        background-color: transparent;
-    }
-    
-    .chat-message {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .user-message {
-        background-color: #e3f2fd;
-        margin-left: 2rem;
-    }
-    
-    .assistant-message {
-        background-color: #f3e5f5;
-        margin-right: 2rem;
-    }
-    
-    .mood-badge {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        background-color: #4caf50;
-        color: white;
-        border-radius: 1rem;
-        font-size: 0.875rem;
-        margin: 0.25rem;
-    }
-    
-    .goal-badge {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        background-color: #2196f3;
-        color: white;
-        border-radius: 1rem;
-        font-size: 0.875rem;
-        margin: 0.25rem;
-    }
-    
-    .welcome-header {
-        text-align: center;
-        padding: 2rem 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 1rem;
-        margin-bottom: 2rem;
-    }
-    
-    .sidebar-section {
-        background-color: #f8f9fa;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-    }
-</style>
-""", unsafe_allow_html=True)
+def load_css_from_file(file_name):
+    try:
+        css_path = os.path.join(os.path.dirname(__file__), file_name)
+        with open(css_path) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.error(f"CSS file not found. Make sure '{file_name}' is in the same folder as this script.")
+
+load_css_from_file("styles.css")
 
 def initialize_session_state():
     """Initialize session state variables."""
@@ -249,82 +193,18 @@ def create_new_conversation():
     """Start a new conversation."""
     st.session_state.current_conversation_id = None
     st.session_state.messages = []
+    # Exit settings mode when starting new chat
+    st.session_state.show_settings = False
 
 def setup_sidebar():
     """Setup the clean sidebar with quick actions, mood, and history."""
     with st.sidebar:
-        # Quick Actions
-        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-        st.markdown("### ⚡ Quick Actions")
+        # New Chat button
+        st.markdown('<div class="sidebar-section sidebar-first">', unsafe_allow_html=True)
         
         if st.button("📝 New Chat", use_container_width=True):
             create_new_conversation()
             st.rerun()
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("💭 Daily Reflection", help="Reflect on your day"):
-                st.session_state.messages.append({
-                    "role": "user",
-                    "content": "Help me reflect on my day. What went well and what could I improve?",
-                    "timestamp": datetime.now().strftime('%H:%M')
-                })
-                st.rerun()
-        
-        with col2:
-            if st.button("🌱 Gratitude Practice", help="Practice gratitude"):
-                st.session_state.messages.append({
-                    "role": "user",
-                    "content": "Let's practice gratitude. Help me identify things I'm grateful for today.",
-                    "timestamp": datetime.now().strftime('%H:%M')
-                })
-                st.rerun()
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Mood section
-        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-        st.markdown("### 😊 Current Mood")
-        
-        mood_options = [
-            "Happy", "Sad", "Anxious", "Excited", "Calm", "Frustrated", 
-            "Grateful", "Confused", "Energetic", "Tired", "Hopeful", "Overwhelmed"
-        ]
-        
-        # Handle case where stored mood isn't in predefined options
-        current_mood_index = 0  # Default to "Not set"
-        if st.session_state.current_mood:
-            try:
-                current_mood_index = mood_options.index(st.session_state.current_mood) + 1
-            except ValueError:
-                # If stored mood isn't in options, add it temporarily or default to "Not set"
-                if st.session_state.current_mood not in mood_options:
-                    mood_options_with_current = mood_options + [st.session_state.current_mood]
-                    current_mood_index = len(mood_options)  # Index of the added mood
-                else:
-                    current_mood_index = 0
-        
-        # Use extended options if we have a custom mood
-        display_options = ["Not set"] + mood_options
-        if (st.session_state.current_mood and 
-            st.session_state.current_mood not in mood_options):
-            display_options.append(st.session_state.current_mood)
-            current_mood_index = len(display_options) - 1
-        
-        selected_mood = st.selectbox(
-            "How are you feeling?",
-            options=display_options,
-            index=current_mood_index
-        )
-        
-        if selected_mood != "Not set" and selected_mood != st.session_state.current_mood:
-            st.session_state.current_mood = selected_mood
-            if st.session_state.assistant:
-                st.session_state.assistant.set_mood(selected_mood)
-            st.success(f"Mood set to: {selected_mood}")
-        
-        if st.session_state.current_mood:
-            st.markdown(f'<span class="mood-badge">😊 {st.session_state.current_mood}</span>', unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
         
@@ -372,24 +252,18 @@ def setup_sidebar():
                 
                 # Show conversation info
                 st.caption(f"📅 {conv.updated_at.strftime('%m/%d %H:%M')} • {conv.message_count} msgs")
-        else:
-            st.info("No conversations yet. Start chatting!")
         
         st.markdown('</div>', unsafe_allow_html=True)
         
-        # Settings at bottom
-        st.markdown("---")
-        if st.button("⚙️ Settings", use_container_width=True):
+        # Settings button with proper CSS positioning
+        st.markdown('<div class="settings-bottom">', unsafe_allow_html=True)
+        if st.button("⚙️ Settings", key="bottom_settings", use_container_width=True):
             st.session_state.show_settings = True
             st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
 def setup_settings_tab():
     """Setup the settings interface."""
-    # Back button at the top
-    if st.button("← Back to Journal", use_container_width=True):
-        st.session_state.show_settings = False
-        st.rerun()
-    
     st.markdown("## ⚙️ Settings")
     
     # User Profile Section
@@ -554,10 +428,8 @@ def main():
     
     # Header
     st.markdown("""
-    <div class="welcome-header">
-        <h1>🌟 AI Journaling Assistant</h1>
-        <p>Your personal companion for reflection, growth, and self-discovery</p>
-        <p><em>Powered by Llama 3 via Ollama</em></p>
+    <div class="clean-header">
+        <h1>Welcome to<br>AI Journaling Assistant</h1>
     </div>
     """, unsafe_allow_html=True)
     
@@ -582,8 +454,7 @@ def main():
                 st.info("💡 Make sure Ollama is running with the llama3:latest model.")
                 st.stop()
     
-    # Chat interface
-    st.markdown("### 💬 Journal Conversation")
+    # Chat interface - no header needed for clean look
     
     # Create a container for the chat messages with fixed height
     chat_container = st.container()
@@ -595,7 +466,7 @@ def main():
                 display_chat_message(message, is_user=(message["role"] == "user"))
     else:
         with chat_container:
-            st.info("👋 Welcome! Start by sharing your thoughts or feelings. I'm here to listen and help you reflect.")
+            pass  # No welcome message needed
     
     # Chat input at the bottom
     user_input = st.chat_input("Share your thoughts, feelings, or ask for guidance...")
@@ -674,6 +545,12 @@ def main():
         # Rerun to update the display
         st.rerun()
     
+    # Fixed disclaimer at bottom
+    st.markdown("""
+    <div class="journal-disclaimer-fixed">
+        <p>AI journaling is not a replacement for professional therapy. AI can make mistakes.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

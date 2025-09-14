@@ -6,7 +6,7 @@ platforms = ["osx-arm64"]
 version = "0.1.0"
 
 [tasks]
-journal-ui = "streamlit run src/streamlit_app.py --server.headless false --theme.base light"
+journal-ui = "streamlit run src/streamlit/streamlit_app.py --server.headless false --theme.base light"
 journal-cli = "python src/interactive_journal.py"
 
 [dependencies]

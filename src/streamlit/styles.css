@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+
+.main {
+    padding-top: 1rem;
+    padding-bottom: 6rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.stApp > header {
+    background-color: transparent;
+}
+
+.stApp {
+    background-color: #ffffff;
+}
+
+/* Simple approach - just hide red borders */
+.st-dm,
+.st-dl,
+.st-dk,
+.st-dj {
+    border-color: transparent !important;
+}
+
+.chat-message {
+    padding: 1.5rem 2rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.user-message {
+    background-color: #f8f9fa;
+    border: 2px solid #1a73e8;
+    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.1);
+}
+
+.assistant-message {
+    background-color: #ffffff;
+    border: 2px solid #34a853;
+    box-shadow: 0 2px 8px rgba(52, 168, 83, 0.1);
+}
+
+.mood-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    margin: 0.25rem;
+}
+
+.goal-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #2196f3;
+    color: white;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    margin: 0.25rem;
+}
+
+.clean-header {
+    text-align: center;
+    padding: 4rem 0 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.clean-header h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #4a7c59;
+    margin: 0;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    font-family: 'Google Sans', 'Inter', sans-serif;
+}
+
+.sidebar-section {
+    background-color: transparent;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-first {
+    margin-top: -1rem;
+    padding-top: 0;
+}
+
+/* Remove button borders and customize styling */
+.stButton > button {
+    border: none !important;
+    background-color: transparent !important;
+    text-align: left !important;
+    padding: 0.5rem 0.75rem !important;
+}
+
+/* Override button hover colors */
+.stButton > button:hover {
+    background-color: #e6e6e6 !important;
+    border: none !important;
+    color: #333333 !important;
+}
+
+/* Sidebar specific button styling */
+div[data-testid="stSidebar"] .stButton > button {
+    border: none !important;
+    background-color: transparent !important;
+    text-align: left !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+}
+
+/* Sidebar specific button hover */
+div[data-testid="stSidebar"] .stButton > button:hover {
+    background-color: #f0f0f0 !important;
+    border: none !important;
+    color: #333333 !important;
+}
+
+/* Prevent button color change when clicked/active/focused */
+.stButton > button:active,
+.stButton > button:focus,
+.stButton > button:visited {
+    color: #333333 !important;
+    background-color: transparent !important;
+    border: none !important;
+}
+
+/* Sidebar specific active/focus states */
+div[data-testid="stSidebar"] .stButton > button:active,
+div[data-testid="stSidebar"] .stButton > button:focus,
+div[data-testid="stSidebar"] .stButton > button:visited {
+    color: #333333 !important;
+    background-color: transparent !important;
+    border: none !important;
+}
+
+/* Only make the main sidebar container a flex container */
+section[data-testid="stSidebar"] > div {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+}
+
+/* Push settings button to bottom */
+.settings-bottom {
+    margin-top: auto !important;
+    padding: 1rem 0 !important;
+}
+
+.stChatInput {
+    max-width: 600px;
+    margin: 2rem auto;
+    position: relative;
+    z-index: 2;
+}
+
+.stChatInput > div {
+    margin: 0 auto;
+}
+
+
+.journal-disclaimer-fixed {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 600px;
+    width: 600px;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    border: none;
+    pointer-events: none;
+    z-index: 1000;
+    transition: left 0.3s ease;
+}
+
+/* When sidebar is expanded, shift right to match the input text box exactly */
+section[data-testid="stSidebar"]:not([aria-expanded="false"]) ~ div .journal-disclaimer-fixed {
+    left: calc(50% + 125px);
+}
+
+.journal-disclaimer-fixed p {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.3;
+}

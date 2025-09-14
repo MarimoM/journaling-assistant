@@ -182,3 +182,4 @@ scripts/langfuse_mining_results
 .claude
 CLAUDE.md
 *.db
+*.pyc
