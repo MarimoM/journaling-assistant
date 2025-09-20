@@ -4,9 +4,9 @@ Conversation summarizer for generating meaningful titles from journaling convers
 """
 
 from typing import List, Dict, Any, Optional
-from ollama_model import OllamaModel
-from template_manager import template_manager
-from database import Message
+from .ollama_model import OllamaModel
+from .template_manager import template_manager
+from .database import Message
 
 class ConversationSummarizer:
     """Generates meaningful summaries and titles for journaling conversations."""
