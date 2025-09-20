@@ -14,12 +14,12 @@ from typing import List, Dict, Any
 # Apply nest_asyncio to allow nested event loops
 nest_asyncio.apply()
 
-# Add the journaling_assistant directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'journaling_assistant'))
+# Add the parent directory to the Python path to access journaling_assistant module
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from sync_agent import SyncJournalingAssistant
-from database import db, Conversation, Message
-from summarizer import summarizer
+from journaling_assistant.sync_agent import SyncJournalingAssistant
+from journaling_assistant.database import db, Conversation, Message
+from journaling_assistant.summarizer import summarizer
 
 
 # Page configuration

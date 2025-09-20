@@ -11,12 +11,12 @@ journal-cli = "python src/interactive_journal.py"
 
 [dependencies]
 pydantic-ai = "*"
-httpx = "*"
-ollama = "*"
-streamlit = "*"
-nest-asyncio = "*"
-jinja2 = "*"
+httpx = ">=0.28.1,<0.29"
+ollama = ">=0.11.10,<0.12"
+streamlit = ">=1.49.1,<2"
+nest-asyncio = ">=1.6.0,<2"
+jinja2 = ">=3.1.6,<4"
 
 [pypi-dependencies]
-langfuse = "*"
-python-dotenv = "*"
+langfuse = ">=3.3.4, <4"
+python-dotenv = ">=1.1.1, <2"

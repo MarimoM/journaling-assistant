@@ -21,7 +21,7 @@ async def main():
         
         assistant = JournalingAssistant()
         # Use non-streaming for now to avoid hanging
-        response = await assistant.chat(prompt, stream=False)
+        response = await assistant.chat(prompt)
         print(response)
     else:
         # Interactive mode - use the full agent interface
