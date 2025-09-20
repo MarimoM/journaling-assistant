@@ -6,7 +6,7 @@ Synchronous wrapper for the Journaling Assistant to work with Streamlit.
 import asyncio
 import nest_asyncio
 from typing import Optional, List
-from agent import JournalingAssistant as AsyncJournalingAssistant, JournalingContext
+from .agent import JournalingAssistant as AsyncJournalingAssistant, JournalingContext
 
 # Apply nest_asyncio to allow nested event loops
 nest_asyncio.apply()
